@@ -43,24 +43,26 @@ from random import randint  # a random number is used to select a random quiz
 # import quizs.defaultQuiz as defaultQuiz
 # import quizs.halloween as halloween
 
-# from quizs import *
-import quizs as test
 
-theme = test.defaultQuiz.defaultQuiz()
+#from quizs import __init__
+from quizs import defaultQuiz as dTest
+from quizs import halloween as hTest
 
+# test2 = "test.defaultQuiz"
+# defaultQ =  __import__(test2)
 
+theme = dTest.defaultQuiz()
 
-# theme = defaultQuiz.defaultQuiz()
 quiz = theme.getQuiz()
-
-
-def importQuizList():
-    import quizs.defaultQuiz as defaultQuiz
-    import quizs.halloween as halloween
 
 
 class App(Frame):
     # import quizs as test
+    quiz = [[["","","","","", 0],
+             ["", "", "", "", "", 0]],  # end Easy
+             [["", "", "", "", "", 0]],  # end Medium
+             [["", "", "", "", "", 0]]  # end Hard
+             ]  # end quiz[]
 
     # init is run on object creation
     def __init__(self, master):
@@ -70,8 +72,9 @@ class App(Frame):
         self.playSound(game_open)  # This will play as soon as the app is started
 
     def populateQuiz(self):
-        theme = test.halloween.halloween()
+        theme = hTest.halloween()
         quiz = theme.getQuiz()
+
 
     # This re-prints the header, it's called before each question is printed
     def header(self):
