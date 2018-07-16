@@ -47,50 +47,51 @@ from random import randint  # a random number is used to select a random quiz
 #from quizs import __init__
 from quizs import defaultQuiz as dTest
 from quizs import halloween as hTest
+from quizs import VSP as vspTest
 
 # test2 = "test.defaultQuiz"
 # defaultQ =  __import__(test2)
 
-theme = dTest.defaultQuiz()
-
-quiz = theme.getQuiz()
+#theme = dTest.defaultQuiz()
+#quiz = theme.getQuiz()
 
 
 class App(Frame):
-    # import quizs as test
-    quiz = [[["","","","","", 0],
-             ["", "", "", "", "", 0]],  # end Easy
-             [["", "", "", "", "", 0]],  # end Medium
-             [["", "", "", "", "", 0]]  # end Hard
-             ]  # end quiz[]
+    theme = dTest.defaultQuiz()
+    vsp = vspTest.VSP()
+    halloween = hTest.halloween()
+    quiz = theme.getQuiz()
 
     # init is run on object creation
     def __init__(self, master):
-        self.populateQuiz()
+        self.master = master
+        self.changeTheme(self.vsp)
         Frame.__init__(self, master)
         self.grid()
         self.playSound(game_open)  # This will play as soon as the app is started
 
-    def populateQuiz(self):
-        theme = hTest.halloween()
-        quiz = theme.getQuiz()
+    def changeTheme(self, newTheme):
+        self.theme = newTheme
+        self.quiz = newTheme.getQuiz()
+        self.master.configure(background=newTheme.getBGColor())
+
 
 
     # This re-prints the header, it's called before each question is printed
     def header(self):
         self.label_1 = Label(root,
-                             text="Welcome to " + theme.getQuizName(),
-                             font=(theme.getFont(), 36),
-                             bg=theme.getBGColor(),
-                             fg=theme.getTitleColor())
+                             text="Welcome to " + self.theme.getQuizName(),
+                             font=(self.theme.getFont(), 36),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getTitleColor())
         self.label_1.grid(columnspan=6,
                           padx=(100, 10))
 
         self.label_2 = Label(root,
                              text="Answer the question for candy!",
-                             font=(theme.getFont(), 28),
-                             bg=theme.getBGColor(),
-                             fg=theme.getSecondaryColor())
+                             font=(self.theme.getFont(), 28),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getSecondaryColor())
         self.label_2.grid(columnspan=6,
                           pady=5,
                           padx=(100, 10))
@@ -99,9 +100,9 @@ class App(Frame):
     def prime(self):
         self.label_7 = Label(root,
                              text="I serve candy.",
-                             font=(theme.getFont(), 32),
-                             bg=theme.getBGColor(),
-                             fg=theme.getFGColor())
+                             font=(self.theme.getFont(), 32),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getFGColor())
         self.label_7.grid(columnspan=6,
                           pady=5,
                           padx=(100, 10))
@@ -110,16 +111,16 @@ class App(Frame):
     def difficulty(self):
         self.label_8 = Label(root,
                              text="Please choose a difficulty.",
-                             font=(theme.getFont(), 32),
-                             bg=theme.getBGColor(),
-                             fg=theme.getFGColor())
+                             font=(self.theme.getFont(), 32),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getFGColor())
         self.label_8.grid(columnspan=6,
                           pady=5,
                           padx=(100, 10))
 
         self.button_8 = Button(root,
                                text="Easy",
-                               font=(theme.getFont(), 36),
+                               font=(self.theme.getFont(), 36),
                                command=lambda: self.selectQuestion(0))  # lambda allows you to pass an argument
         self.button_8.grid(row=5,
                            column=1,
@@ -127,7 +128,7 @@ class App(Frame):
 
         self.button_9 = Button(root,
                                text="Medium",
-                               font=(theme.getFont(), 36),
+                               font=(self.theme.getFont(), 36),
                                command=lambda: self.selectQuestion(1))
         self.button_9.grid(row=5,
                            column=3,
@@ -135,7 +136,7 @@ class App(Frame):
 
         self.button_10 = Button(root,
                                 text="Hard",
-                                font=(theme.getFont(), 36),
+                                font=(self.theme.getFont(), 36),
                                 command=lambda: self.selectQuestion(2))
         self.button_10.grid(row=5,
                             column=5,
@@ -143,16 +144,16 @@ class App(Frame):
 
         self.label_11 = Label(root,
                               text="Prizes: Easy = 1 candy, Medium = 2 candies, Hard = 3 candies",
-                              font=(theme.getFont(), 16),
-                              bg=theme.getBGColor(),
-                              fg=theme.getFGColor())
+                              font=(self.theme.getFont(), 16),
+                              bg=self.theme.getBGColor(),
+                              fg=self.theme.getFGColor())
         self.label_11.grid(columnspan=6,
                            pady=5,
                            padx=(100, 10))
 
         self.button_theme = Button(root,
                                    text="Theme",
-                                   font=(theme.getFont(), 16),
+                                   font=(self.theme.getFont(), 16),
                                    command=lambda: self.selectTheme())
         self.button_theme.grid(row=1,
                                column=6,
@@ -180,17 +181,17 @@ class App(Frame):
 
 
 
-        quantity = (int(len(quiz[difficulty])) - 1)  # gets the number of questions in selected difficulty, cast int to avoid errors
+        quantity = (int(len(self.quiz[difficulty])) - 1)  # gets the number of questions in selected difficulty, cast int to avoid errors
         randomSelection = int(randint(0, quantity))  # randomly selects a number in a valid range
         print(randomSelection)  # prints the number selected to the console. I used this for error checking, but it isnt necessary for the game.
 
         # pass values to be printed to screen. [difficulty][selection][data]
-        self.quizMe(quiz[difficulty][randomSelection][0],  # question
-                    quiz[difficulty][randomSelection][1],  # choice1
-                    quiz[difficulty][randomSelection][2],  # choice2
-                    quiz[difficulty][randomSelection][3],  # choice3
-                    quiz[difficulty][randomSelection][4],  # choice4
-                    quiz[difficulty][randomSelection][5],  # answerNum
+        self.quizMe(self.quiz[difficulty][randomSelection][0],  # question
+                    self.quiz[difficulty][randomSelection][1],  # choice1
+                    self.quiz[difficulty][randomSelection][2],  # choice2
+                    self.quiz[difficulty][randomSelection][3],  # choice3
+                    self.quiz[difficulty][randomSelection][4],  # choice4
+                    self.quiz[difficulty][randomSelection][5],  # answerNum
                     difficulty)  # difficulty
 
     # This method accepts all quiz info and prints it to the screen
@@ -218,9 +219,9 @@ class App(Frame):
         # question
         self.label_3 = Label(root,
                              text=question,
-                             font=(theme.getFont(), fontSizeL),
-                             bg=theme.getBGColor(),
-                             fg=theme.getFGColor())
+                             font=(self.theme.getFont(), fontSizeL),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getFGColor())
 
         self.label_3.grid(columnspan=6,
                           pady=5,
@@ -229,7 +230,7 @@ class App(Frame):
         # choice1
         self.button_1 = Button(root,
                                text=choice1,
-                               font=(theme.getFont(), fontSizeB),
+                               font=(self.theme.getFont(), fontSizeB),
                                command=lambda: result[1](difficulty))  # lambda allows you to pass an argument
         self.button_1.grid(row=4,
                            column=1,
@@ -239,7 +240,7 @@ class App(Frame):
         # choice2
         self.button_2 = Button(root,
                                text=choice2,
-                               font=(theme.getFont(), fontSizeB),
+                               font=(self.theme.getFont(), fontSizeB),
                                command=lambda: result[2](difficulty))
         self.button_2.grid(row=4,
                            column=3,
@@ -249,7 +250,7 @@ class App(Frame):
         # choice3
         self.button_3 = Button(root,
                                text=choice3,
-                               font=(theme.getFont(), fontSizeB),
+                               font=(self.theme.getFont(), fontSizeB),
                                command=lambda: result[3](difficulty))
         self.button_3.grid(row=5,
                            column=1,
@@ -259,7 +260,7 @@ class App(Frame):
         # choice4
         self.button_4 = Button(root,
                                text=choice4,
-                               font=(theme.getFont(), fontSizeB),
+                               font=(self.theme.getFont(), fontSizeB),
                                command=lambda: result[4](difficulty))
         self.button_4.grid(row=5,
                            column=3,
@@ -272,9 +273,9 @@ class App(Frame):
 
         self.label_7 = Label(root,
                              text="CORRECT!!!!",
-                             font=(theme.getFont(), 32),
-                             bg=theme.getBGColor(),
-                             fg=theme.getFGColor())
+                             font=(self.theme.getFont(), 32),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getFGColor())
 
         self.label_7.grid(columnspan=6,
                           pady=5,
@@ -290,9 +291,9 @@ class App(Frame):
 
         self.label_7 = Label(root,
                              text="Wrong, but thanks for playing.",
-                             font=(theme.getFont(), 32),
-                             bg=theme.getBGColor(),
-                             fg=theme.getFGColor())
+                             font=(self.theme.getFont(), 32),
+                             bg=self.theme.getBGColor(),
+                             fg=self.theme.getFGColor())
 
         self.label_7.grid(columnspan=6,
                           pady=5,

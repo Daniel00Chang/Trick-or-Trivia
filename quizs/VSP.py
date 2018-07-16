@@ -1,12 +1,14 @@
-class VSP ():
+from quizs.defaultQuiz import defaultQuiz as Parent
+
+class VSP (Parent):
 
     def __init__(self):
         self._font = "Times"
-        self._bgColor = "black"
-        self._fgColor = "red"
-        self._quizName = "defaultQuiz"
+        self._bgColor = "#325665"
+        self._fgColor = "#86CBDF"
+        self._quizName = "VSP Trivia"
         self._titleColor = "white"
-        self._secondaryColor = "green"
+        self._secondaryColor = "#A2C534"
 
         # question, choice1, choice2, chioce3, choice4, correct answer, difficulty [difficulty][selection][data]
         # EASY
@@ -24,7 +26,7 @@ class VSP ():
                    ["When was VSP founded?", "1952", "1953", "1954", "1955", 4],
                    ["When did VSP change its name from CVS?", "1960's", "1970's", "1980's", "1990's", 2],
                    ["How many employees did VSP have in 1994?", "300", "1,000", "4,000", "over 9,000", 2],
-                   ["When did HQ5 open?", "", "", "", "", 0]
+                   ["When did HQ5 open?", "2008", "2010", "2012", "2014", 4]
                    ],  # end Medium
 
                   # HARD
