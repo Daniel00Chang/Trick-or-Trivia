@@ -29,7 +29,7 @@ except:  # Either developing on a pc or OS doesn't support GPIO, replace librari
 
     correct_audio_path = os.path.join(audio_folder, "correct.mp3")
     incorrect_audio_path = os.path.join(audio_folder, "wrong.mp3")
-    game_open = os.path.join(audio_folder, "cow.mp3")
+    game_open = os.path.join(audio_folder, "correct.mp3")
     print(game_open)
 
     onPi = False
