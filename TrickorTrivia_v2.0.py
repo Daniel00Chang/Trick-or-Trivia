@@ -26,8 +26,9 @@ except:  # Either developing on a pc or OS doesn't support GPIO, replace librari
     cwd = os.getcwd()
     audio_folder = os.path.join(cwd, "audio")
 
-    correct_audio_path = os.path.join(audio_folder, "cow.mp3")
-    incorrect_audio_path = os.path.join(audio_folder, "cow.mp3")
+
+    correct_audio_path = os.path.join(audio_folder, "correct.mp3")
+    incorrect_audio_path = os.path.join(audio_folder, "wrong.mp3")
     game_open = os.path.join(audio_folder, "cow.mp3")
     print(game_open)
 
@@ -54,7 +55,8 @@ from quizs import VSP as vspTest
 
 #theme = dTest.defaultQuiz()
 #quiz = theme.getQuiz()
-
+import numpy as np
+SCREEN_SIZE = "800x480"
 
 class App(Frame):
     theme = dTest.defaultQuiz()
@@ -108,7 +110,7 @@ class App(Frame):
                           padx=(100, 10))
 
     # Prints select difficulty buttons
-    def difficulty(self):
+    def chooseDifficulty(self):
         self.label_8 = Label(root,
                              text="Please choose a difficulty.",
                              font=(self.theme.getFont(), 32),
@@ -170,7 +172,7 @@ class App(Frame):
 
 
     # Randomly selects a question in the correct difficulty
-    def selectQuestion(self, difficulty):
+    def selectQuestion(self, difficultyLvl):
 
         self.label_7.destroy()  # destroys the label from correct() wrong()
         self.label_8.destroy()  # destroys all the labels and buttons from difficulty()
@@ -181,21 +183,38 @@ class App(Frame):
 
 
 
-        quantity = (int(len(self.quiz[difficulty])) - 1)  # gets the number of questions in selected difficulty, cast int to avoid errors
+        quantity = (int(len(self.quiz[difficultyLvl])) - 1)  # gets the number of questions in selected difficulty, cast int to avoid errors
         randomSelection = int(randint(0, quantity))  # randomly selects a number in a valid range
-        print(randomSelection)  # prints the number selected to the console. I used this for error checking, but it isnt necessary for the game.
+        randomOrder = int(randint(1, 50))
+        np.random.seed(randomOrder)
+
+        # place choices in an array
+        choices = [self.quiz[difficultyLvl][randomSelection][1],
+                   self.quiz[difficultyLvl][randomSelection][2],
+                   self.quiz[difficultyLvl][randomSelection][3],
+                   self.quiz[difficultyLvl][randomSelection][4]]
+        choices = np.array(choices)
+
+        # get answer
+        answerLoc = self.quiz[difficultyLvl][randomSelection][5]
+        answer = self.quiz[difficultyLvl][randomSelection][answerLoc]
+
+        # shuffle order
+        np.random.shuffle(choices)
+        answerLoc = np.where(choices == answer)
+        answerLoc = int((answerLoc[0][0]))+1
 
         # pass values to be printed to screen. [difficulty][selection][data]
-        self.quizMe(self.quiz[difficulty][randomSelection][0],  # question
-                    self.quiz[difficulty][randomSelection][1],  # choice1
-                    self.quiz[difficulty][randomSelection][2],  # choice2
-                    self.quiz[difficulty][randomSelection][3],  # choice3
-                    self.quiz[difficulty][randomSelection][4],  # choice4
-                    self.quiz[difficulty][randomSelection][5],  # answerNum
-                    difficulty)  # difficulty
+        self.quizMe(self.quiz[difficultyLvl][randomSelection][0],  # question
+                    choices[0],  # choice1
+                    choices[1],  # choice2
+                    choices[2],  # choice3
+                    choices[3],  # choice4
+                    answerLoc,  # answerNum
+                    difficultyLvl)  # difficulty
 
     # This method accepts all quiz info and prints it to the screen
-    def quizMe(self, question, choice1, choice2, choice3, choice4, correctChoice, difficulty):
+    def quizMe(self, question, choice1, choice2, choice3, choice4, correctChoice, difficultyLvl):
 
         result = [self.wrong, self.wrong, self.wrong, self.wrong, self.wrong]  # array to hold method names for button commands. Prime array by filling with wrong
         result[correctChoice] = self.correct  # assigns correct answer in correct possition
@@ -231,7 +250,7 @@ class App(Frame):
         self.button_1 = Button(root,
                                text=choice1,
                                font=(self.theme.getFont(), fontSizeB),
-                               command=lambda: result[1](difficulty))  # lambda allows you to pass an argument
+                               command=lambda: result[1](difficultyLvl))  # lambda allows you to pass an argument
         self.button_1.grid(row=4,
                            column=1,
                            pady=5,
@@ -241,7 +260,7 @@ class App(Frame):
         self.button_2 = Button(root,
                                text=choice2,
                                font=(self.theme.getFont(), fontSizeB),
-                               command=lambda: result[2](difficulty))
+                               command=lambda: result[2](difficultyLvl))
         self.button_2.grid(row=4,
                            column=3,
                            sticky=W,
@@ -251,7 +270,7 @@ class App(Frame):
         self.button_3 = Button(root,
                                text=choice3,
                                font=(self.theme.getFont(), fontSizeB),
-                               command=lambda: result[3](difficulty))
+                               command=lambda: result[3](difficultyLvl))
         self.button_3.grid(row=5,
                            column=1,
                            pady=5,
@@ -261,39 +280,41 @@ class App(Frame):
         self.button_4 = Button(root,
                                text=choice4,
                                font=(self.theme.getFont(), fontSizeB),
-                               command=lambda: result[4](difficulty))
+                               command=lambda: result[4](difficultyLvl))
         self.button_4.grid(row=5,
                            column=3,
                            sticky=W,
                            padx=(100, 10))
 
     # Executes all necessary functions for a correct answer
-    def correct(self, difficulty):
+    def correct(self, difficultyLvl):
         self.clearPage()  # Destroys all buttons and lables on screen before displaying results
 
         self.label_7 = Label(root,
                              text="CORRECT!!!!",
                              font=(self.theme.getFont(), 32),
                              bg=self.theme.getBGColor(),
-                             fg=self.theme.getFGColor())
+                             fg="green")
 
         self.label_7.grid(columnspan=6,
                           pady=5,
                           padx=(100, 10))
 
         self.playSound(correct_audio_path)  # Send the filepath of the audio to play for correct answer
-        self.pushCandy((difficulty + 1))  # dispenses appropriate number of candies for difficulty
-        self.difficulty()  # asks for difficulty of next question
+        self.pushCandy((difficultyLvl + 1))  # dispenses appropriate number of candies for difficulty
+
+        self.chooseDifficulty()  # asks for difficulty of next question
+
 
     # Executes all necessary functions for a wrong answer
-    def wrong(self, difficulty):
+    def wrong(self, difficultyLvl):
         self.clearPage()  # Destroys all buttons and lables on screen before displaying results
 
         self.label_7 = Label(root,
-                             text="Wrong, but thanks for playing.",
+                             text="Wrong, try again.",
                              font=(self.theme.getFont(), 32),
                              bg=self.theme.getBGColor(),
-                             fg=self.theme.getFGColor())
+                             fg="red")
 
         self.label_7.grid(columnspan=6,
                           pady=5,
@@ -301,7 +322,7 @@ class App(Frame):
 
         self.playSound(incorrect_audio_path)  # Send the filepath of the audio to play for correct answer
         self.pushCandy(1)  # dispenses 1 candy for incorrect guess
-        self.difficulty()  # asks for difficulty of next question
+        self.chooseDifficulty()  # asks for difficulty of next question
 
     # Pushes the servo in and out to dispense candy, dispenses as much candy as parameter specifies
     def pushCandy(self, candies):
@@ -341,7 +362,7 @@ class App(Frame):
 root = Tk()
 root.title("Trick or Trivia")  # adds a name to the titlebar of the application
 root.overrideredirect(True)  # This takes up the whole screen and removes x to exit
-root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))  # when I was testing on desktop I replaced {0}x{1}+0+0 with the resolution of my touchscreen
+root.geometry(SCREEN_SIZE.format(root.winfo_screenwidth(),root.winfo_screenheight()))  # when I was testing on desktop I replaced {0}x{1}+0+0 with the resolution of my touchscreen
 root.focus_set()  # <-- move focus to this widget
 
 if (onPi == True):
@@ -353,10 +374,5 @@ app = App(master=root)  # object instantiation
 # app.populateQuiz()
 app.header()
 app.prime()
-app.difficulty()
-Button(app,
-       text="X",
-       command=root.destroy,
-       bg="red").pack()
-
+app.chooseDifficulty()
 app.mainloop()  # This is necessary for event programming in tkinter

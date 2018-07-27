@@ -15,10 +15,10 @@ class VSP (Parent):
 
         self._quiz = [[["Which is not a branch of VSP", "VSP Vision Care", "Marchon", "Ultair", "Eyefinity", 3],
                     ["How many members do we have?", "1,000-99,999", "100,000-999,999", "1-80 Million", "80 Million+", 4],
-                    ["Where did VSP originate?", "Oakland", "New York", "Los Angelas", "San Francisco", 1],
+                    ["Where did VSP originate?", "Oakland", "New York", "Los Angeles", "San Francisco", 1],
                     ["When was VSP founded?", "1940's", "1950's", "1960's", "2020's", 2],
                     ["How many buildings are in the Rancho campus?", "1", "3", "5", "8", 3],
-                    ["What does VSP stand for?", "Vision Service Planet", "Very Strong Pupils", "Vision Service People", "Vision Service Plan", 0]
+                    ["What does VSP stand for?", "Vision Service Planet", "Very Strong Pupils", "Vision Service People", "Vision Service Plan", 4]
                     ],  # end Easy
 
                   # MEDIUM
