@@ -202,7 +202,7 @@ class App(Frame):
         # shuffle order
         np.random.shuffle(choices)
         answerLoc = np.where(choices == answer)
-        answerLoc = int((answerLoc[0][0]))+1
+        answerLoc = int(answerLoc[0][0])+1
 
         # pass values to be printed to screen. [difficulty][selection][data]
         self.quizMe(self.quiz[difficultyLvl][randomSelection][0],  # question
