@@ -8,7 +8,7 @@ class halloween(Parent):
         self._fgColor = "green"
         self._quizName = "Trick or Trivia"
         self._titleColor = "white"
-        self._secondaryColor = "red"
+        self._secondaryColor = "orange"
 
         # question, choice1, choice2, chioce3, choice4, correct answer, difficulty [difficulty][selection][data]
         # EASY
